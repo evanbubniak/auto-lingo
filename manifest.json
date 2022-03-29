@@ -1,0 +1,27 @@
+{
+    "name": "Autolingo",
+    "version": "0.01",
+    "description": "Advance forward in Duolingo without thinking about it",
+    "manifest_version": 3,
+        "author": "Evan Bubniak",
+    "action": {
+        "default_title": "Autolingo",
+        "default_popup": "extensionMenu.html"
+    },
+    "permissions": [
+        "activeTab",
+        "webNavigation",
+        "cookies",
+        "storage"
+    ],
+    "host_permissions": [
+        "*://*.duolingo.com/"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [{
+        "matches": ["*://www.duolingo.com/skill/*"],
+        "js": ["lessonScript.js"]
+    }]
+}
