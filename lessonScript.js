@@ -1,6 +1,6 @@
 const PLAYER_NEXT = 'button[data-test="player-next"]';
 const BLAME_INCORRECT = '[data-test="blame blame-incorrect"]';
-const SENDER = "auto-lingo";
+const SENDER = "auto-lingo-lesson-script";
 const GET_STATE = "getState";
 const START_LOOP = "startLoop";
 const CLEAR_LOOP = "clearLoop";

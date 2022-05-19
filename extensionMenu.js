@@ -1,4 +1,4 @@
-const SENDER = "auto-lingo"
+const SENDER = "auto-lingo-extension-menu"
 const GET_SKILLS = "getSkills";
 const GET_STATE = "getState";
 const START_LESSON = "startLesson";

@@ -1,4 +1,4 @@
-const SENDER = "auto-lingo";
+const SENDER = "auto-lingo-background";
 const GET_SKILLS = "getSkills";
 const GET_STATE = "getState";
 const CLEAR_LOOP = "clearLoop";
@@ -116,7 +116,6 @@ function goToNextLesson() {
   getCurrentTab()
   .then(currentTab => {
     if (currentTab) {
-      // currentTab = tab;
       getSkills()
       .then(response => {
         chrome.tabs.update(currentTab.id, {url: response.nextUrl});
@@ -127,7 +126,6 @@ function goToNextLesson() {
 
 
 chrome.webNavigation.onCompleted.addListener(() => {
-  // console.log("webNavigation fired")
   getState("shouldContinueToNext")
     .then(shouldContinueToNext => {
       if (shouldContinueToNext) {
@@ -141,7 +139,6 @@ function stopInterval() {
   .then(currentTab => {
     if (currentTab) {
       chrome.tabs.sendMessage(currentTab.id, {sender: SENDER, message: CLEAR_LOOP})
-      // currentTab = tab;
     }
   })
   .catch(rejectedReason => {
@@ -154,7 +151,6 @@ function startInterval() {
   .then(currentTab => {
     if (currentTab) {
       chrome.tabs.sendMessage(currentTab.id, {sender: SENDER, message: START_LOOP})
-      // currentTab = tab;
     }
   })
   .catch(rejectedReason => {
@@ -163,37 +159,35 @@ function startInterval() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.sender === SENDER) {
-    if (message.message === START_LESSON) {
-      goToNextLesson()
-    }
-    if (message.message === ENABLE_AUTO_CONTINUE) {
-      setState("shouldContinueToNext", true)
-    }
-    if (message.message === DISABLE_AUTO_CONTINUE) {
-      setState("shouldContinueToNext", false);
-    }
-
-    if (message.message === ENABLE_AUTO_ADVANCE) {
-      setState("shouldAutoAdvance", true)
-      startInterval()
-    }
-    if (message.message === DISABLE_AUTO_ADVANCE) {
-      setState("shouldAutoAdvance", false);
-      stopInterval()
-    }
-    if (message.message === GET_STATE) {
-      getState(message.key)
-        .then(value => {
-          sendResponse(value);
-        })
-    }
-    if (message.message === GET_SKILLS) {
-      getSkills()
-      .then(skillsResp => {
-        sendResponse(skillsResp);
-      })
-    }
-    return true;
+  if (message.message === START_LESSON) {
+    goToNextLesson()
   }
+  if (message.message === ENABLE_AUTO_CONTINUE) {
+    setState("shouldContinueToNext", true)
+  }
+  if (message.message === DISABLE_AUTO_CONTINUE) {
+    setState("shouldContinueToNext", false);
+  }
+
+  if (message.message === ENABLE_AUTO_ADVANCE) {
+    setState("shouldAutoAdvance", true)
+    startInterval()
+  }
+  if (message.message === DISABLE_AUTO_ADVANCE) {
+    setState("shouldAutoAdvance", false);
+    stopInterval()
+  }
+  if (message.message === GET_STATE) {
+    getState(message.key)
+      .then(value => {
+        sendResponse(value);
+      })
+  }
+  if (message.message === GET_SKILLS) {
+    getSkills()
+    .then(skillsResp => {
+      sendResponse(skillsResp);
+    })
+  }
+  return true;
 });
