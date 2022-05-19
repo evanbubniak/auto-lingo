@@ -119,7 +119,6 @@ function goToNextLesson() {
       // currentTab = tab;
       getSkills()
       .then(response => {
-        console.log(`redirecting to ${response.nextUrl}`)
         chrome.tabs.update(currentTab.id, {url: response.nextUrl});
       });
     }
