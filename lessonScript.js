@@ -8,9 +8,13 @@ const START_LESSON = "startLesson";
 
 const INTERVAL_LENGTH = 750;
 
-function main() {
+function getNextButton() {
     const nextButtons = document.querySelectorAll(PLAYER_NEXT);
-    const nextButton = nextButtons[0];
+    return nextButtons[0];    
+}
+
+function main() {
+    const nextButton = getNextButton();
     if (nextButton) {
         const correctAnswer = document.querySelectorAll(BLAME_INCORRECT).length === 0;
         if ((nextButton.textContent.toUpperCase().valueOf() === "CONTINUE" && correctAnswer) || nextButton.textContent.toUpperCase().valueOf() === "EQUIP FOR FREE") {
@@ -58,7 +62,7 @@ function pauseLoop() {
     }
 }
 
-window.onload = () => {
+function initializeLoop() {
     chrome.runtime.sendMessage({ sender: SENDER, message: GET_STATE, key: "shouldAutoAdvance" }, (shouldAutoAdvance) => {
         if (shouldAutoAdvance) {
             startLoop()
@@ -73,6 +77,18 @@ window.onload = () => {
         }
     })
     document.addEventListener("visibilitychange", handleVisibilityChange);
+}
+
+let checkForStartInterval;
+function checkForStart() {
+    const nextButton = getNextButton();
+    if (nextButton) {
+        clearInterval(checkForStartInterval);
+        initializeLoop();
+    }
+}
+window.onload = () => {
+    checkForStartInterval = setInterval(checkForStart, INTERVAL_LENGTH)
 }
 
 handleVisibilityChange = () => {
