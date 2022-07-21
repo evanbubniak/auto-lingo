@@ -72,10 +72,20 @@ async function getSkills() {
         return {
           name: skill.name,
           level: skill.finishedLevels,
-          href: `https://www.duolingo.com/skill/${href_stem}/${skill.urlName}/${skill.finishedLessons + 1}`
+          href: `https://www.duolingo.com/skill/${href_stem}/${skill.urlName}/${skill.finishedLessons + 1}`,
+          accessible: skill.hasOwnProperty("accessible") && skill.accessible ? true : false
         };
       })
-      const nextUrl = formattedSkills.filter(skill => skill.level === 0)[0].href        
+      const nextSkill = formattedSkills.filter(skill => skill.level === 0)[0]
+      let nextUrl;
+      if (nextSkill.accessible) {
+        nextUrl = nextSkill.href;
+      } else {
+        const nextCheckpoint = response_json.currentCourse.sections.filter(section => section.checkpointAccessible && !(section.checkpointFinished))[0];
+        const nextCheckpointNum = (parseInt(nextCheckpoint.name.substring(11)) - 1).toString();
+        nextUrl = `https://www.duolingo.com/checkpoint/${href_stem}/${nextCheckpointNum}`
+      }
+      
       
       resolve({
         skills: formattedSkills,
