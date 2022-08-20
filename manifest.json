@@ -12,7 +12,8 @@
         "activeTab",
         "webNavigation",
         "cookies",
-        "storage"
+        "storage",
+        "tabs"
     ],
     "host_permissions": [
         "*://*.duolingo.com/"
