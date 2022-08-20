@@ -21,10 +21,18 @@ function main() {
             nextButton.click();
         }
         const purchaseStepActive = document.querySelectorAll('[data-test="purchase-step-active"]');
+        const pickStreakGoal = document.querySelectorAll('[data-test="streak-goal-title"]');
         const keepPracticingNow = nextButton.textContent.toUpperCase().valueOf() === "LEARN MORE"
         if (keepPracticingNow) {
             const bottom_bottons = document.getElementById("session/PlayerFooter").getElementsByTagName("button")
             Array.from(bottom_bottons).filter(button => button.textContent.toUpperCase() === "NO THANKS")[0].click()
+        }
+        if (pickStreakGoal.length > 0) {
+                const bottom_bottons = document.getElementById("session/PlayerFooter").getElementsByTagName("button")
+                const skipButtons = Array.from(bottom_bottons).filter(button => button.textContent.toUpperCase() === "SKIP")
+                if (skipButtons.length > 0) {
+                skipButtons[0].click();
+            } 
         }
         if (purchaseStepActive.length > 0) {
             const noThanks = document.querySelector('[data-test="plus-no-thanks"]');
