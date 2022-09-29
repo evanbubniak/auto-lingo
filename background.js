@@ -72,7 +72,7 @@ async function getSkills() {
         return {
           name: skill.name,
           level: skill.finishedLevels,
-          href: `https://www.duolingo.com/skill/${href_stem}/${skill.urlName}/${skill.finishedLessons + 1}`,
+          href: `https://www.duolingo.com/skill/${href_stem}/${encodeURIComponent(skill.urlName)}/${skill.finishedLessons + 1}`,
           accessible: skill.hasOwnProperty("accessible") && skill.accessible ? true : false
         };
       })
