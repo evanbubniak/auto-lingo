@@ -1,6 +1,7 @@
 const PLAYER_NEXT = 'button[data-test="player-next"]';
 const BLAME_INCORRECT = '[data-test="blame blame-incorrect"]';
 const SENDER = "auto-lingo-lesson-script";
+const BACKGROUND_SENDER = "auto-lingo-background"
 const GET_STATE = "getState";
 const START_LOOP = "startLoop";
 const CLEAR_LOOP = "clearLoop";
@@ -49,7 +50,7 @@ function main() {
     }
 }
 
-let intervalId;
+let intervalId = null;
 function startLoop() {
     if (!intervalId) {
         intervalId = setInterval(main, INTERVAL_LENGTH);
@@ -77,10 +78,11 @@ function initializeLoop() {
         }
     })
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.sender === SENDER && message.message === CLEAR_LOOP && intervalId) {
+        if (message.sender === BACKGROUND_SENDER && message.message === CLEAR_LOOP && intervalId !== null) {
             clearLoop();
+
         }
-        if (message.sender === SENDER && message.message === START_LOOP && !intervalId) {
+        if (message.sender === BACKGROUND_SENDER && message.message === START_LOOP && intervalId === null) {
             startLoop();
         }
     })
