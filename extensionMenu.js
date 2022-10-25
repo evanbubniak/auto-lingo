@@ -2,10 +2,12 @@ const SENDER = "auto-lingo-extension-menu"
 const GET_SKILLS = "getSkills";
 const GET_STATE = "getState";
 const START_LESSON = "startLesson";
+const START_PRACTICE = "startPractice";
 const ENABLE_AUTO_ADVANCE = "enableAutoAdvance";
 const DISABLE_AUTO_ADVANCE = "disableAutoAdvance";
-const ENABLE_AUTO_CONTINUE = "enableAutoContinue";
-const DISABLE_AUTO_CONTINUE = "disableAutoContinue";
+const AUTO_NEXT_LESSON = "next-lesson"
+const AUTO_NEXT_PRACTICE = "practice"
+const AUTO_NEXT_DISABLED = "none"
 
 async function getCurrentTab() {
     let queryOptions = { active: true, currentWindow: true };
@@ -49,30 +51,36 @@ async function getState(key) {
 }
 
 window.onload = () => {
-    const next = document.getElementById("next");
-    const autoStart = document.getElementById("auto-start");
+    const nextLesson = document.getElementById("next-lesson");
+    const nextPractice = document.getElementById("next-practice");
+    const continueTypeDropdown = document.getElementById("continue-type");
     const autoAdvance = document.getElementById("auto-advance");
     
 
-    next.addEventListener("click", event => {
+    nextLesson.addEventListener("click", event => {
         event.preventDefault();
         chrome.runtime.sendMessage({sender: SENDER, message: START_LESSON});
     });
 
-    getState("shouldContinueToNext")
-        .then(shouldContinueToNext => {
-            if (shouldContinueToNext) {
-                autoStart.checked = true;
+    nextPractice.addEventListener("click", event => {
+        event.preventDefault();
+        chrome.runtime.sendMessage({sender: SENDER, message: START_PRACTICE});
+    });
+
+    getState("continueType")
+        .then(continueType => {
+            console.log(continueType)
+            if (continueType === AUTO_NEXT_LESSON) {
+                continueTypeDropdown.value = AUTO_NEXT_LESSON
+            } else if (continueType === AUTO_NEXT_PRACTICE) {
+                continueTypeDropdown.value = AUTO_NEXT_PRACTICE
             } else {
-                autoStart.checked = false;
+                continueTypeDropdown.value = AUTO_NEXT_DISABLED
             }
-            autoStart.disabled = false;
-            autoStart.addEventListener("change", event => {
-                if (autoStart.checked) {
-                    chrome.runtime.sendMessage({sender: SENDER, message: ENABLE_AUTO_CONTINUE})
-                } else {
-                    chrome.runtime.sendMessage({sender: SENDER, message: DISABLE_AUTO_CONTINUE})
-                }
+            continueTypeDropdown.disabled = false;
+            continueTypeDropdown.addEventListener("change", event => {
+                console.log(continueTypeDropdown.value)
+                chrome.runtime.sendMessage({sender: SENDER, message: continueTypeDropdown.value})
             })
         })
 

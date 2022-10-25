@@ -22,7 +22,7 @@
         "service_worker": "background.js"
     },
     "content_scripts": [{
-        "matches": ["*://www.duolingo.com/skill/*"],
+        "matches": ["*://www.duolingo.com/skill/*", "*://www.duolingo.com/practice"],
         "js": ["lessonScript.js"]
     }]
 }

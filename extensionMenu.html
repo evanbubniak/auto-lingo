@@ -5,9 +5,14 @@
     </head>
     <body>
         <form>
-            <input type="submit" value="Next Lesson" id="next">
-            <input type="checkbox" id="auto-start" name="auto-start" value="auto-start" disabled>
-            <label for="auto-start">Auto-start lesson</label><br>
+            <input type="submit" value="Next Lesson" id="next-lesson">
+            <input type="submit" value="Practice" id="next-practice">
+            <label for="continue-type">Lesson continue mode:</label>
+            <select name="continue-type" id="continue-type" disabled>
+                <option value="next-lesson">Next lesson</option>
+                <option value="practice">Practice</option>
+                <option value="none">None</option>
+            </select>
             <input type="checkbox" id="auto-advance" name="auto-advance" value="auto-advance" disabled>
             <label for="auto-advance">Auto-advance lesson</label><br>
         </form>

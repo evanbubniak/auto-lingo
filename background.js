@@ -3,11 +3,15 @@ const GET_SKILLS = "getSkills";
 const GET_STATE = "getState";
 const CLEAR_LOOP = "clearLoop";
 const START_LESSON = "startLesson";
+const START_PRACTICE = "startPractice";
 const START_LOOP = "startLoop";
 const ENABLE_AUTO_ADVANCE = "enableAutoAdvance";
 const DISABLE_AUTO_ADVANCE = "disableAutoAdvance";
-const ENABLE_AUTO_CONTINUE = "enableAutoContinue";
-const DISABLE_AUTO_CONTINUE = "disableAutoContinue";
+const AUTO_NEXT_LESSON = "next-lesson"
+const AUTO_NEXT_PRACTICE = "practice"
+const AUTO_NEXT_DISABLED = "none"
+const PRACTICE_URL = "https://www.duolingo.com/practice"
+
 
 const urlFilter = {
     url: [
@@ -101,6 +105,7 @@ function setState(key, value) {
 const defaultStates = {
   shouldContinueToNext: false,
   shouldAutoAdvance: false,
+  continueType: AUTO_NEXT_DISABLED
 }
 
 async function getState(key) {
@@ -134,15 +139,39 @@ function goToNextLesson() {
   })
 }
 
+function goToPractice() {
+  getCurrentTab()
+  .then(currentTab => {
+    if (currentTab) {
+      chrome.tabs.update(currentTab.id, {url: PRACTICE_URL});
+    }
+  })
+}
 
-chrome.webNavigation.onCompleted.addListener(() => {
-  getState("shouldContinueToNext")
-    .then(shouldContinueToNext => {
-      if (shouldContinueToNext) {
+
+// chrome.webNavigation.onCompleted.addListener(() => {
+//   getState("shouldContinueToNext")
+//     .then(shouldContinueToNext => {
+//       if (shouldContinueToNext) {
+//         goToNextLesson()
+//       }
+//     })
+//   }, urlFilter);
+
+function handleHomepage() {
+  getState("continueType")
+    .then(continueType => {
+      if (continueType === AUTO_NEXT_LESSON) {
         goToNextLesson()
+      } else if (continueType === AUTO_NEXT_PRACTICE) {
+        goToPractice()
       }
     })
-  }, urlFilter);
+}
+
+chrome.webNavigation.onHistoryStateUpdated.addListener(handleHomepage, urlFilter);
+
+chrome.webNavigation.onCompleted.addListener(handleHomepage, urlFilter);
 
 function stopInterval() {
   getCurrentTab()
@@ -172,12 +201,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.message === START_LESSON) {
     goToNextLesson()
   }
-  if (message.message === ENABLE_AUTO_CONTINUE) {
-    setState("shouldContinueToNext", true)
+
+  if (message.message === START_PRACTICE) {
+    goToPractice()
   }
-  if (message.message === DISABLE_AUTO_CONTINUE) {
-    setState("shouldContinueToNext", false);
+
+  if (message.message ===AUTO_NEXT_LESSON) {
+    setState("continueType", AUTO_NEXT_LESSON)
   }
+  if (message.message ===AUTO_NEXT_PRACTICE) {
+    setState("continueType", AUTO_NEXT_PRACTICE)
+  }
+  if (message.message ===AUTO_NEXT_DISABLED) {
+    setState("continueType", AUTO_NEXT_DISABLED)
+  }
+
 
   if (message.message === ENABLE_AUTO_ADVANCE) {
     setState("shouldAutoAdvance", true)
